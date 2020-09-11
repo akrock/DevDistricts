@@ -34,7 +34,7 @@ jobs:
         if: github.event_name == 'push' && github.ref == 'refs/heads/master' && steps.semantic.outputs.new_release_published == 'true'
         run: dotnet build -p:Version=${{ steps.semantic.outputs.new_release_version }} --configuration Release --no-restore
       - name: Pack
-        if: github.event_name == 'push' && github.ref == 'refs/heads/master' && steps.dryrun.outputs.new_release_published == 'true'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master' && steps.semantic.outputs.new_release_published == 'true'
         run: dotnet pack -p:Version=${{ steps.semantic.outputs.new_release_version }} -p:PackageReleaseNotes="${{ steps.semantic.outputs.new_release_notes }}" --no-build --configuration Release DevDistricts/DevDistricts.csproj --output .
       - name: Nuget Push
         if: github.event_name == 'push' && github.ref == 'refs/heads/master' && steps.semantic.outputs.new_release_published == 'true'
