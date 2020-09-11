@@ -36,12 +36,13 @@ jobs:
       - name: Test
         run: dotnet test --no-restore --verbosity normal
       - name: Pack
-        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master' && steps.dryrun.outputs.new_release_published == 'true'
         run: dotnet pack -p:Version=${{ steps.dryrun.outputs.new_release_version }} -p:PackageReleaseNotes=${{ steps.dryrun.outputs.new_release_notes }} --no-build --configuration Release DevDistricts/DevDistricts.csproj --output .
       - name: Nuget Push
-        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master' && steps.dryrun.outputs.new_release_published == 'true'
         run: dotnet nuget push *.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.PUBLISH_TO_NUGET_ORG }} --skip-duplicate
       - name: Semantic Release
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master' && steps.dryrun.outputs.new_release_published == 'true'
         uses: cycjimmy/semantic-release-action@v2
         id: semantic
         env:
