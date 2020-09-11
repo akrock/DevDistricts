@@ -27,7 +27,40 @@ jobs:
         dry_run: true
     - name: Install dependencies
       run: dotnet restore
-    - name: Build
-      run: dotnet build /p:Version=${{ steps.dryrun.outputs.new_release_version }} --configuration Release --no-restore
-    - name: Test
-      run: dotnet test --no-restore --verbosity normal
+    name: .NET Core
+
+    on:
+      push:
+        branches: [ master ]
+      pull_request:
+        branches: [ master ]
+
+    jobs:
+      build:
+
+        runs-on: ubuntu-latest
+
+        steps:
+          - uses: actions/checkout@v2
+          - name: Setup .NET Core
+            uses: actions/setup-dotnet@v1
+            with:
+              dotnet-version: 3.1.301
+          - name: Semantic Release
+            uses: cycjimmy/semantic-release-action@v2
+            id: dryrun
+            env:
+              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            with:
+              semantic_version: 17
+              dry_run: true
+          - name: Install dependencies
+            run: dotnet restore
+          - name: Build With Version
+            if: steps.dryrun.outputs.new_release_published == 'true'
+            run: dotnet build /p:Version=${{ steps.dryrun.outputs.new_release_version }} --configuration Release --no-restore
+          - name: Build (standard)
+            if: steps.dryrun.outputs.new_release_published == 'false'
+            run: dotnet build --configuration Release --no-restore
+          - name: Test
+            run: dotnet test --no-restore --verbosity normal
