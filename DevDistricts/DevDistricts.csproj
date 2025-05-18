@@ -3,7 +3,6 @@
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
         <Nullable>enable</Nullable>
-        <LangVersion>8</LangVersion>
         <PackageLicenseUrl>https://github.com/akrock/DevDistricts/blob/master/LICENSE</PackageLicenseUrl>
         <PackageProjectUrl>https://github.com/akrock/DevDistricts</PackageProjectUrl>
         <Authors>akrock</Authors>
